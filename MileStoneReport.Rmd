@@ -1,0 +1,128 @@
+---
+title: 'CapStone: Milestone Report'
+author: "Santhosh Shankar"
+date: "March 18, 2016"
+output: html_document
+---
+###OverView
+Welcome to Milestone Report - this report deals with textmining and performing some exploratory analysis on the SwiftKey provided data corpus - Blogs, News and Twitter. We will focus mainly on the English Data set and try to do the same on other languages too (if time permits). 
+
+###Objectives
+Below are the salient features of this report and it's objectives, 
+
+1. Exploratory analysis - perform a thorough exploratory analysis of the data, understanding the distribution of words and relationship between the words in the corpora.
+
+2. Textmining - Understand frequencies of words and word pairs (using nGrams) - build figures and tables to understand variation in the frequencies of words and word pairs in the data.
+
+3. Lay down the foundation for building effective Prediction Algorithm
+
+4. Intent to build a Shiny App that takes as input a phrase (multiple words), one clicks submit, and it predicts the next word using the Prediction Algorithm developed as part of my Project.
+
+
+The goal of this project is just to display that I've gotten used to working with the data and that I am on track to create my prediction algorithm. 
+
+### Data Source
+The data used for this project has been taken from [SwiftKey][1].
+
+Your feedback into my work is much appreciated as I am still learning the whole concept of Data Science!!
+
+##Perform Some Exploratary Analysis
+Find basic things like Word Count, Line Count and so on. Plot some useful graphs.
+### Source the R file which has all the code for my Analysis (Details provided at the bottom)
+```{r init, results='hide', message = FALSE, warning = FALSE}
+    require(knitr)
+    opts_chunk$set(message = FALSE, warning = FALSE)
+    source("MileStoneReport.R")
+    # Initialize
+    initialize()
+    
+    # Download the data if required
+    getCorpusData(pathname)
+    
+    # Perform Text Mining on all Language set of files sequentially
+    #tdm <- lapply(langs, textMine, pathname)
+    # For now, just to Enginlis, "en_US"
+    textAnalysisResult <- textMine("en_US", pathname)
+    tdm <- textAnalysisResult$tdm
+    nGramResult <- textAnalysisResult$myNGrams
+```
+
+
+### Basic Analysis of the Blogs Data
+```{r blogs, echo=FALSE}
+    print(paste("File Size (in MB): ", round(tdm[[1]]$fileSz/(1024^2), 2)))
+    print(paste("Line Count: ", tdm[[1]]$lineCount))
+
+    print(paste("Word Count: ", sum(tdm[[1]]$wordsnsample$wordCount)))
+    print("Words Summary Details:")
+    print(summary(tdm[[1]]$wordsnsample$wordCount))
+    
+```
+
+### Basic Analysis of the News Data
+```{r news, echo=FALSE}
+    print(paste("File Size (in MB): ", round(tdm[[2]]$fileSz/(1024^2),2)))
+    print(paste("Line Count: ", tdm[[2]]$lineCount))
+
+    print(paste("Word Count: ", sum(tdm[[2]]$wordsnsample$wordCount)))
+    print("Words Summary Details:")
+    print(summary(tdm[[2]]$wordsnsample$wordCount))
+```
+
+### Basic Analysis of the Twitter Data
+```{r twitter, echo=FALSE}
+    print(paste("File Size (in MB): ", round(tdm[[3]]$fileSz/(1024^2),2)))
+    print(paste("Line Count: ", tdm[[3]]$lineCount))
+
+    print(paste("Word Count: ", sum(tdm[[3]]$wordsnsample$wordCount)))
+    print("Words Summary Details:")
+    print(summary(tdm[[3]]$wordsnsample$wordCount))
+```
+
+
+### Analysis of the Corpus Data from all Files
+I have taken 1000 line random samples from each files - blogs, news and twitter text files. And then performed preprocessing and computed n-grams (upto 4) for the sample Corpus.
+
+##### Monogram
+```{r monogram, echo=FALSE}
+    # number of ngrams to show in the graph
+    n <- 20
+    # Plotting of the various nGrams    
+    ggplot(nGramResult$monoGrams[1:n,], aes(Words, Count)) + geom_bar(stat = "identity") + coord_flip()
+```
+
+##### Bigram
+```{r Bigram, echo=FALSE}
+    ggplot(nGramResult$biGrams[1:n,], aes(Words, Count)) + geom_bar(stat = "identity") + coord_flip()
+```
+
+##### Trigram
+```{r Trigram, echo=FALSE}
+    ggplot(nGramResult$triGrams[1:n,], aes(Words, Count)) + geom_bar(stat = "identity") + coord_flip()
+```
+
+##### Quadraplegram
+```{r Quadraplegram, echo=FALSE}
+    ggplot(nGramResult$quadriGrams[1:n,], aes(Words, Count)) + geom_bar(stat = "identity") + coord_flip()
+```    
+
+
+## Next Action Plan
+Here are my next Action Plan,
+
+1. Continue to evolv my corpus analysis - cleaning of profanity, increasing sample size to be used for the prediction algorithm.
+
+2. Formulate an optimum prediction algorithm - keeping in mind to balance both memory and run-time efficiency.
+
+3. Implement the prediction algorithm and test on real data for accuracy check.
+
+4. Deploy the prediction algorithm in to a Shiny App to predict the next user input after user keys in a phrase (2-4 words).
+
+# Thank You very Much!!
+
+### Appendix
+The source code for my complete analysis (MileStoneReport.R) is available at [My Github Account] [2] 
+
+
+[1]: https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip "SwiftKey"
+[2]: https://github.com/HIRIYURS/CapStoneProject/blob/master/MileStoneReport.R "My Github Account"
